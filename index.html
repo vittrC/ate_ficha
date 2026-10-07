@@ -208,9 +208,9 @@
 			gap: 18px;
 			min-height: 76px;
 			padding: 10px clamp(14px, 3vw, 42px);
-			background: #050505ee;
-			border-bottom: 3px solid var(--paper);
-			box-shadow: 0 5px 0 #05050580;
+			background: linear-gradient(180deg, rgba(5,5,5,.97), rgba(10,10,10,.9));
+			border-bottom: 4px solid var(--paper);
+			box-shadow: 0 7px 0 rgba(5,5,5,.6), 0 16px 40px rgba(0,0,0,.35);
 			backdrop-filter: blur(14px);
 		}
 
@@ -292,9 +292,10 @@
 
 		.tab-button[aria-selected="true"] {
 			color: var(--panel-ink);
-			background: var(--paper);
+			background: linear-gradient(180deg, #fff 0%, #f3f3f3 100%);
 			border-color: var(--paper);
-			box-shadow: 3px 3px 0 var(--accent);
+			box-shadow: 4px 4px 0 var(--accent), 0 0 22px rgba(255,255,255,.3);
+			transform: translateY(-1px);
 		}
 
 		.actions {
@@ -404,16 +405,17 @@
 			position: relative;
 			min-width: 0;
 			color: var(--panel-ink);
-			background: var(--paper);
+			background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(245,245,245,0.94));
 			border: 3px solid var(--panel-ink);
-			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+			box-shadow: 7px 7px 0 var(--panel-ink), 11px 11px 0 rgba(255,255,255,0.2);
+			filter: saturate(1.08);
 		}
 
 		.panel-dark {
 			color: var(--paper);
-			background: var(--panel-ink);
+			background: linear-gradient(135deg, #050505 0%, #111 100%);
 			border-color: var(--paper);
-			box-shadow: 5px 5px 0 var(--paper), 7px 7px 0 var(--panel-ink);
+			box-shadow: 5px 5px 0 var(--paper), 9px 9px 0 var(--accent);
 		}
 
 		.panel-heading {
@@ -503,11 +505,12 @@
 
 		.preset-summary {
 			margin: 20px 0;
-			padding: 16px;
+			padding: 18px 18px 16px;
 			color: var(--panel-ink);
-			background: var(--paper);
+			background: linear-gradient(135deg, rgba(255,255,255,0.98), rgba(228,228,228,0.94));
 			border: 3px solid var(--panel-ink);
-			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+			box-shadow: 8px 8px 0 var(--panel-ink), 13px 13px 0 rgba(242,11,22,0.2);
+			transform: skewX(-.8deg);
 		}
 
 		.preset-summary[hidden], .trail-ability-panel[hidden] { display: none; }
@@ -546,11 +549,38 @@
 
 		.preset-summary-grid {
 			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(4, minmax(0, 1fr));
 			gap: 14px;
 		}
 
 		.preset-summary-grid article { min-width: 0; }
+
+		.movement-signature-panel {
+			margin: 18px 0 20px;
+			padding: 18px 18px 16px;
+			color: var(--paper);
+			background: linear-gradient(135deg, #0b0b0b 0%, #171717 40%, #230609 100%);
+			border: 3px solid var(--paper);
+			box-shadow: 8px 8px 0 var(--paper), 12px 12px 0 var(--accent), 0 0 26px rgba(242,11,22,0.28);
+			transform: rotate(-0.6deg);
+		}
+
+		.movement-signature-panel .panel-heading {
+			margin-bottom: 12px;
+			font-size: 1.18rem;
+		}
+
+		.movement-signature-area {
+			width: 100%;
+			min-height: 90px;
+			padding: 12px 14px;
+			background: rgba(255,255,255,0.08);
+			border: 2px solid rgba(255,255,255,0.28);
+			color: var(--paper);
+			font-weight: 700;
+			line-height: 1.45;
+			resize: vertical;
+		}
 
 		.preset-summary-grid p {
 			margin: 6px 0 0;
@@ -796,7 +826,7 @@
 			text-transform: uppercase;
 		}
 
-		.mini-stat > span { color: var(--accent); }
+		.mini-stat > span { color: var(--black); }
 
 		.mini-stat:last-child { grid-column: 1 / -1; }
 
@@ -834,6 +864,31 @@
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			gap: 22px;
 			align-items: start;
+		}
+
+		.last-action-panel {
+			margin-top: 16px;
+			padding: 16px;
+			color: var(--paper);
+			background: var(--panel-ink);
+			border: 3px solid var(--paper);
+			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+		}
+
+		.last-action-panel .panel-heading {
+			margin-bottom: 12px;
+			font-size: 1.15rem;
+		}
+
+		.last-action-area {
+			width: 100%;
+			min-height: 110px;
+			padding: 12px 14px;
+			background: var(--paper);
+			border: 2px solid transparent;
+			color: var(--panel-ink);
+			font-weight: 700;
+			resize: vertical;
 		}
 
 		.content-panel { padding: 19px; }
@@ -1024,7 +1079,7 @@
 			.dynamic-row .record-input, .dynamic-row .record-area { grid-column: 1; }
 			.dynamic-row .remove-button { grid-column: 2; grid-row: 1; }
 			.notes-grid { grid-template-columns: 1fr; }
-			.preset-summary-grid { grid-template-columns: 1fr; gap: 12px; }
+			.preset-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 			.preset-summary-title { align-items: start; flex-direction: column; }
 			.preset-summary-title strong { text-align: left; }
 		}
@@ -1033,6 +1088,111 @@
 			.tab-button { padding: 0 3px; font-size: .65rem; letter-spacing: .055em; }
 			.page-heading { gap: 8px; }
 			.page-title { font-size: 1.9rem; }
+		}
+
+		.effect-legend-button {
+			position: fixed;
+			right: 22px;
+			bottom: 22px;
+			z-index: 40;
+			padding: 12px 16px;
+			color: var(--paper);
+			background: linear-gradient(135deg, #0b0b0b 0%, #1b1b1b 50%, #22060a 100%);
+			border: 3px solid var(--paper);
+			box-shadow: 6px 6px 0 var(--paper), 0 0 24px rgba(242,11,22,.35);
+			font: .78rem var(--display);
+			letter-spacing: .14em;
+			text-transform: uppercase;
+			transition: transform .18s ease, box-shadow .18s ease;
+		}
+
+		.effect-legend-button:hover {
+			transform: translateY(-2px) scale(1.02);
+			box-shadow: 8px 8px 0 var(--paper), 0 0 28px rgba(242,11,22,.42);
+		}
+
+		.effect-legend-overlay {
+			position: fixed;
+			inset: 0;
+			z-index: 50;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 18px;
+			background: rgba(5, 5, 5, 0.72);
+			backdrop-filter: blur(6px);
+		}
+
+		.effect-legend-overlay.is-open {
+			display: flex;
+		}
+
+		.effect-legend-modal {
+			width: min(740px, calc(100vw - 32px));
+			max-height: min(82vh, 820px);
+			overflow: auto;
+			padding: 18px 20px 16px;
+			color: var(--panel-ink);
+			background: var(--paper);
+			border: 3px solid var(--panel-ink);
+			box-shadow: 8px 8px 0 var(--panel-ink), 12px 12px 0 var(--paper);
+		}
+
+		.effect-legend-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			margin-bottom: 14px;
+		}
+
+		.effect-legend-header h2 {
+			margin: 0;
+			font: 1.3rem var(--display);
+			letter-spacing: .08em;
+			text-transform: uppercase;
+		}
+
+		.effect-legend-close {
+			width: 34px;
+			height: 34px;
+			padding: 0;
+			color: var(--panel-ink);
+			background: transparent;
+			border: 2px solid var(--panel-ink);
+			font: 1.25rem var(--display);
+		}
+
+		.effect-legend-list {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: grid;
+			gap: 12px;
+		}
+
+		.effect-legend-item {
+			display: grid;
+			grid-template-columns: 120px minmax(0, 1fr);
+			gap: 12px;
+			padding: 10px 12px;
+			background: rgba(17, 17, 17, 0.04);
+			border-left: 4px solid var(--accent);
+		}
+
+		.effect-legend-name {
+			margin: 0;
+			font: .9rem var(--display);
+			letter-spacing: .08em;
+			text-transform: uppercase;
+			color: var(--accent);
+		}
+
+		.effect-legend-description {
+			margin: 0;
+			font-size: .94rem;
+			font-weight: 700;
+			line-height: 1.5;
 		}
 
 		@media (hover: hover) and (pointer: fine) {
@@ -1059,6 +1219,27 @@
 	</div>
 
 	<div class="app" id="app">
+		<button class="effect-legend-button" id="effects-button" type="button" aria-expanded="false" aria-controls="effects-overlay">Efeitos</button>
+		<div class="effect-legend-overlay" id="effects-overlay" hidden>
+			<div class="effect-legend-modal" role="dialog" aria-modal="true" aria-labelledby="effects-title">
+				<div class="effect-legend-header">
+					<h2 id="effects-title">Legenda de efeitos</h2>
+					<button class="effect-legend-close" id="effects-close" type="button" aria-label="Fechar legenda">×</button>
+				</div>
+				<ul class="effect-legend-list">
+					<li class="effect-legend-item"><p class="effect-legend-name">ABERTO</p><p class="effect-legend-description">não pode reagir a ataques.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">ATORDOADO</p><p class="effect-legend-description">não pode agir ou reagir.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">DESNORTEADO</p><p class="effect-legend-description">caso tente se mover deve rolar 1D4 para decidir a direção em que vai e perde 1D6 em ataques.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">FATIGADO</p><p class="effect-legend-description">incapaz de ganhar PE.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">ENVENENADO</p><p class="effect-legend-description">incapaz de ganhar PE e perde 1D6 de vida por rodada.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">FRACO</p><p class="effect-legend-description">-5 de dano por ataque.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">RESONANTE</p><p class="effect-legend-description">+1D6 em testes quando em um combo ressonante.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">VIGOROSO</p><p class="effect-legend-description">danos recebidos são reduzidos pela metade.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">SANGRANDO</p><p class="effect-legend-description">perde 1D6 de vida por rodada; caso PV atinja metade recebe o efeito de fraco além do sangrando.</p></li>
+					<li class="effect-legend-item"><p class="effect-legend-name">INSPIRADO</p><p class="effect-legend-description">testes em cenas de investigação ganham +1 dado bônus; em combates tem +1 ação padrão.</p></li>
+				</ul>
+			</div>
+		</div>
 		<header class="topbar">
 			<div class="brand">
 				<div class="brand-mark" aria-hidden="true"></div>
@@ -1137,27 +1318,33 @@
 					<p class="preset-trail-overview" id="preset-trail-overview" hidden></p>
 					<div class="preset-summary-grid">
 						<article><h3>EFEITO DO FOCO</h3><p id="preset-focus-effect"></p></article>
+						<article id="preset-movement-wrap"><h3>MOVIMENTO ASSINATURA</h3><p id="preset-movement-signature">Ação principal que define sua presença em combate.</p></article>
 						<article id="preset-trail-bonus-wrap"><h3>BÔNUS DA TRILHA</h3><p id="preset-trail-bonus"></p></article>
 						<article id="preset-trail-unlocks-wrap"><h3 id="preset-trail-unlocks-label">PERÍCIAS DESBLOQUEADAS</h3><p id="preset-trail-unlocks"></p></article>
 					</div>
 				</section>
 
-				<section class="skills-layout">
-					<div class="panel skills-panel">
-						<h2 class="panel-heading" data-key="attributes-title" data-editable="true">ATRIBUTOS & PERÍCIAS</h2>
-						<div class="attribute-columns"><div class="attribute-list" id="attribute-list-a"></div><div class="attribute-list" id="attribute-list-b"></div></div>
-						<div class="attribute-list" id="extra-skill-list"></div>
-						<button class="add-button light" type="button" data-add-skill>+ NOVO ATRIBUTO</button>
-					</div>
-					<aside class="notes-panel">
-						<h2 class="panel-heading" data-key="combat-title" data-editable="true">COMBATE</h2>
-						<div class="combat-mini-grid">
-							<label class="mini-stat"><span data-key="defense-label-mini" data-editable="true">DEFESA</span><input type="text" data-key="defense-mini" placeholder="—"></label>
-							<label class="mini-stat"><span data-key="actions-label-mini" data-editable="true">AÇÕES</span><input type="text" data-key="actions-mini" placeholder="—"></label>
-							<label class="mini-stat"><span data-key="block-label-mini" data-editable="true">BLOQUEIO</span><input type="text" data-key="block-mini" placeholder="—"></label>
-						</div>
+<aside class="movement-signature-panel" aria-label="Movimento assinatura do personagem">
+						<h2 class="panel-heading" data-key="movement-signature-title" data-editable="true">MOVIMENTO ASSINATURA</h2>
+						<textarea class="movement-signature-area" data-key="movement-signature" placeholder="Descreva o movimento, golpe ou ação que define sua assinatura..."></textarea>
 					</aside>
-				</section>
+
+					<section class="skills-layout">
+						<div class="panel skills-panel">
+							<h2 class="panel-heading" data-key="attributes-title" data-editable="true">ATRIBUTOS & PERÍCIAS</h2>
+							<div class="attribute-columns"><div class="attribute-list" id="attribute-list-a"></div><div class="attribute-list" id="attribute-list-b"></div></div>
+							<div class="attribute-list" id="extra-skill-list"></div>
+							<button class="add-button light" type="button" data-add-skill>+ NOVO ATRIBUTO</button>
+						</div>
+						<aside class="notes-panel">
+							<h2 class="panel-heading" data-key="combat-title" data-editable="true">COMBATE</h2>
+							<div class="combat-mini-grid">
+								<label class="mini-stat"><span data-key="defense-label-mini" data-editable="true">DEFESA</span><input type="text" data-key="defense-mini" placeholder="—"></label>
+								<label class="mini-stat"><span data-key="actions-label-mini" data-editable="true">AÇÕES</span><input type="text" data-key="actions-mini" placeholder="—"></label>
+								<label class="mini-stat"><span data-key="block-label-mini" data-editable="true">BLOQUEIO</span><input type="text" data-key="block-mini" placeholder="—"></label>
+							</div>
+						</aside>
+					</section>
 			</section>
 
 			<section class="page" id="page-equipment" role="tabpanel" aria-labelledby="tab-equipment" data-page="equipment">
@@ -1172,9 +1359,9 @@
 						<button class="add-button light" type="button" data-add-item="equipment">+ NOVO EQUIPAMENTO</button>
 					</section>
 					<section class="panel content-panel">
-						<h2 class="panel-heading" data-key="abilities-heading" data-editable="true">EQUIPAMENTOS</h2>
+						<h2 class="panel-heading" data-key="abilities-heading" data-editable="true">HABILIDADES</h2>
 						<div class="record-list" data-list="abilities"></div>
-						<button class="add-button light" type="button" data-add-item="abilities">+ NOVO EQUIPAMENTO</button>
+						<button class="add-button light" type="button" data-add-item="abilities">+ NOVO REGISTRO</button>
 					</section>
 				</div>
 			</section>
@@ -1201,6 +1388,7 @@
 			const storageKey = "ate-persona-sheet-v1";
 			const app = document.querySelector("#app");
 			const workspace = document.querySelector("#workspace");
+			const movementSignatureDefault = "Ação principal que define sua presença em combate.";
 			const defaultLists = {
 				equipment: [{ title: "", detail: "" }],
 				abilities: [{ title: "", detail: "" }],
@@ -1448,15 +1636,18 @@
 			function renderLists(lists) {
 				for (const group of ["equipment", "abilities", "notes"]) {
 					const container = document.querySelector(`[data-list="${group}"]`);
+					if (!container) continue;
 					container.replaceChildren();
 					for (const item of Array.isArray(lists[group]) ? lists[group] : []) {
 						container.append(group === "notes" ? makeNote(item) : makeRecord(group, item));
 					}
 				}
 				const extraSkills = document.querySelector("#extra-skill-list");
-				extraSkills.replaceChildren();
-				for (const item of Array.isArray(lists.extraSkills) ? lists.extraSkills : []) {
-					extraSkills.append(makeExtraSkill(item));
+				if (extraSkills) {
+					extraSkills.replaceChildren();
+					for (const item of Array.isArray(lists.extraSkills) ? lists.extraSkills : []) {
+						extraSkills.append(makeExtraSkill(item));
+					}
 				}
 				setEditMode(app.classList.contains("is-editing"));
 			}
@@ -1595,6 +1786,9 @@
 				document.querySelector("#preset-trail-overview").textContent = trail?.overview || "";
 				document.querySelector("#preset-trail-overview").hidden = !trail;
 				document.querySelector("#preset-focus-effect").textContent = focus.effect;
+				document.querySelector("#preset-movement-signature").textContent =
+					document.querySelector('[data-key="movement-signature"]')?.value ||
+					(movementSignatureDefault || "Ação principal que define sua presença em combate.");
 				document.querySelector("#preset-trail-bonus-wrap").hidden = !trail;
 				document.querySelector("#preset-trail-bonus").textContent = trail?.bonus || "";
 				document.querySelector("#preset-trail-unlocks-wrap").hidden = !trail;
@@ -1695,6 +1889,26 @@
 			document.querySelector(".tabs").addEventListener("click", event => {
 				const tab = event.target.closest("[data-tab-target]");
 				if (tab) setPage(tab.dataset.tabTarget);
+			});
+
+			const effectsButton = document.querySelector("#effects-button");
+			const effectsOverlay = document.querySelector("#effects-overlay");
+			const effectsClose = document.querySelector("#effects-close");
+
+			function toggleEffectsPopup(forceOpen = null) {
+				const shouldOpen = forceOpen === null ? !effectsOverlay.classList.contains("is-open") : forceOpen;
+				effectsOverlay.classList.toggle("is-open", shouldOpen);
+				effectsOverlay.hidden = !shouldOpen;
+				effectsButton.setAttribute("aria-expanded", String(shouldOpen));
+			}
+
+			effectsButton.addEventListener("click", () => toggleEffectsPopup());
+			effectsClose.addEventListener("click", () => toggleEffectsPopup(false));
+			effectsOverlay.addEventListener("click", event => {
+				if (event.target === effectsOverlay) toggleEffectsPopup(false);
+			});
+			document.addEventListener("keydown", event => {
+				if (event.key === "Escape") toggleEffectsPopup(false);
 			});
 
 			document.querySelector("#edit-toggle").addEventListener("click", event => {
