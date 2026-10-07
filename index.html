@@ -1,0 +1,1807 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#f20b16">
+    <link rel="icon" type="image/png" href="icon.png">
+	<title>ATE - FICHA</title>
+	<style>
+		:root {
+			color-scheme: dark;
+			--red: #f20b16;
+			--black: #050505;
+			--white: #fff;
+		}
+
+		* { box-sizing: border-box; }
+
+		html, body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			overflow: hidden;
+			background: var(--red);
+		}
+
+		.scene {
+			position: relative;
+			width: 100%;
+			height: 100%;
+			min-height: 100svh;
+			overflow: hidden;
+			isolation: isolate;
+			background: var(--red);
+		}
+
+		.geometry {
+			position: absolute;
+			z-index: -1;
+			inset: -10%;
+			background: var(--black);
+			clip-path: polygon(0 0, 45% 0, 12% 20%, 76% 43%, 76% 100%, 52% 100%, 52% 48%, 8% 28%, 38% 100%, 0 100%);
+		}
+
+		.geometry::before,
+		.geometry::after {
+			position: absolute;
+			content: "";
+			background: var(--red);
+		}
+
+		.geometry::before {
+			inset: 0 0 0 12%;
+			clip-path: polygon(0 0, 100% 0, 100% 35%, 14% 20%, 62% 100%, 36% 100%, 0 28%);
+		}
+
+		.geometry::after {
+			inset: 22% 0 0 0;
+			clip-path: polygon(0 0, 42% 18%, 55% 100%, 42% 100%, 28% 22%, 0 10%);
+		}
+
+		.star {
+			--size: 120px;
+			--duration: 12s;
+			--color-duration: calc(var(--duration) * 1.7);
+			--delay: 0s;
+			--drift-x: 22px;
+			--drift-y: -30px;
+			position: absolute;
+			display: block;
+			width: var(--size);
+			aspect-ratio: 1;
+			background: linear-gradient(115deg, var(--black) 50%, var(--white) 50%);
+			background-size: 200% 100%;
+			background-position: 0% 50%;
+			clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 72%, 21% 94%, 32% 57%, 2% 35%, 39% 35%);
+			animation: travel var(--duration) ease-in-out var(--delay) infinite alternate,
+				fill-dark-light var(--color-duration) ease-in-out var(--delay) infinite,
+				appear calc(var(--duration) * 1.3) ease-in-out var(--delay) infinite;
+			filter: drop-shadow(4px 6px 0 var(--black));
+			will-change: transform, background-position, opacity;
+		}
+
+		.star::before,
+		.star::after,
+		.star span {
+			position: absolute;
+			display: block;
+			content: "";
+			clip-path: inherit;
+		}
+
+		.star::before {
+			inset: 9%;
+			background: linear-gradient(115deg, var(--white) 50%, var(--black) 50%);
+			background-size: 200% 100%;
+			background-position: 100% 50%;
+			animation: fill-light-dark var(--color-duration) ease-in-out var(--delay) infinite;
+		}
+
+		.star::after {
+			inset: 19%;
+			background: linear-gradient(115deg, var(--black) 50%, var(--white) 50%);
+			background-size: 200% 100%;
+			background-position: 0% 50%;
+			animation: fill-dark-light var(--color-duration) ease-in-out var(--delay) infinite;
+		}
+
+		.star span {
+			inset: 30%;
+			z-index: 1;
+			background: linear-gradient(115deg, var(--white) 50%, var(--black) 50%);
+			background-size: 200% 100%;
+			background-position: 100% 50%;
+			animation: fill-light-dark var(--color-duration) ease-in-out var(--delay) infinite;
+		}
+
+		.star:nth-of-type(2) { left: -4%; top: -3%; --size: clamp(190px, 32vw, 360px); --duration: 17s; --delay: -4s; --drift-x: 35px; --drift-y: 25px; }
+		.star:nth-of-type(3) { left: 73%; top: 7%; --size: clamp(46px, 9vw, 94px); --duration: 9s; --delay: -7s; --drift-x: -25px; --drift-y: 18px; }
+		.star:nth-of-type(4) { left: 64%; top: 31%; --size: clamp(78px, 15vw, 154px); --duration: 13s; --delay: -2s; --drift-x: 18px; --drift-y: -34px; }
+		.star:nth-of-type(5) { left: 7%; top: 37%; --size: clamp(120px, 25vw, 250px); --duration: 20s; --delay: -11s; --drift-x: 28px; --drift-y: 26px; }
+		.star:nth-of-type(6) { left: 40%; top: 61%; --size: clamp(190px, 34vw, 350px); --duration: 15s; --delay: -5s; --drift-x: -30px; --drift-y: -22px; }
+		.star:nth-of-type(7) { left: -1%; top: 77%; --size: clamp(120px, 25vw, 250px); --duration: 18s; --delay: -9s; --drift-x: 30px; --drift-y: -25px; }
+		.star:nth-of-type(8) { left: 79%; top: 82%; --size: clamp(54px, 11vw, 112px); --duration: 11s; --delay: -3s; --drift-x: -22px; --drift-y: -30px; }
+
+		@keyframes travel {
+			from { transform: translate3d(0, 0, 0) rotate(-18deg) scale(.88); }
+			to { transform: translate3d(var(--drift-x), var(--drift-y), 0) rotate(342deg) scale(1.08); }
+		}
+
+		@keyframes fill-dark-light {
+			0%, 20% { background-position: 0% 50%; }
+			50%, 70% { background-position: 100% 50%; }
+			100% { background-position: 0% 50%; }
+		}
+
+		@keyframes fill-light-dark {
+			0%, 20% { background-position: 0% 50%; }
+			50%, 70% { background-position: 100% 50%; }
+			100% { background-position: 0% 50%; }
+		}
+
+		@keyframes appear {
+			0%, 8%, 72%, 100% { opacity: 0; }
+			14%, 62% { opacity: 1; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: 0.01ms !important;
+				animation-iteration-count: 1 !important;
+			}
+		}
+
+		html, body {
+			height: auto;
+			min-height: 100%;
+			overflow-x: hidden;
+			overflow-y: auto;
+			background: transparent;
+		}
+
+		:root {
+			--paper: #fff;
+			--panel-ink: #050505;
+			--accent: #f20b16;
+			--muted: #b9b9b9;
+			--display: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+			--body: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+		}
+
+		.scene {
+			position: fixed;
+			z-index: 0;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			min-height: 100%;
+			pointer-events: none;
+		}
+
+		body::after {
+			position: fixed;
+			z-index: 0;
+			inset: 0;
+			content: "";
+			pointer-events: none;
+			background-image: radial-gradient(#05050536 1.4px, transparent 1.4px);
+			background-size: 29px 29px;
+			opacity: .45;
+		}
+
+		.app {
+			position: relative;
+			z-index: 1;
+			min-height: 100vh;
+			color: var(--paper);
+			font-family: var(--body);
+		}
+
+		.topbar {
+			position: sticky;
+			z-index: 10;
+			top: 0;
+			display: grid;
+			grid-template-columns: minmax(190px, 1fr) auto minmax(260px, 1fr);
+			align-items: center;
+			gap: 18px;
+			min-height: 76px;
+			padding: 10px clamp(14px, 3vw, 42px);
+			background: #050505ee;
+			border-bottom: 3px solid var(--paper);
+			box-shadow: 0 5px 0 #05050580;
+			backdrop-filter: blur(14px);
+		}
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			min-width: 0;
+		}
+
+		.brand-mark {
+			position: relative;
+			flex: 0 0 39px;
+			width: 39px;
+			aspect-ratio: 1;
+			background: var(--paper);
+			clip-path: polygon(50% 0, 62% 35%, 100% 35%, 69% 57%, 81% 96%, 50% 73%, 19% 96%, 31% 57%, 0 35%, 38% 35%);
+			filter: drop-shadow(3px 3px 0 var(--accent));
+			animation: mark-spin 14s linear infinite;
+		}
+
+		.brand-mark::after {
+			position: absolute;
+			inset: 25%;
+			content: "";
+			background: var(--panel-ink);
+			clip-path: inherit;
+		}
+
+		.brand-copy { min-width: 0; }
+
+		.brand-name {
+			display: block;
+			max-width: 240px;
+			overflow: hidden;
+			font: 1.2rem/1 var(--display);
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		.brand-subtitle {
+			display: block;
+			margin-top: 5px;
+			color: #c9c9c9;
+			font-size: .68rem;
+			font-weight: 700;
+			letter-spacing: .11em;
+		}
+
+		.tabs {
+			display: flex;
+			justify-content: center;
+			gap: 5px;
+		}
+
+		button, input, textarea { font: inherit; }
+
+		button {
+			color: inherit;
+			cursor: pointer;
+		}
+
+		.tab-button,
+		.action-button,
+		.add-button,
+		.icon-button {
+			min-height: 38px;
+			border: 1px solid #ffffff50;
+			background: transparent;
+			font-weight: 900;
+			transition: color .18s ease, background .18s ease, transform .18s ease, border-color .18s ease;
+		}
+
+		.tab-button {
+			padding: 0 13px;
+			font: .82rem var(--display);
+			letter-spacing: .12em;
+		}
+
+		.tab-button[aria-selected="true"] {
+			color: var(--panel-ink);
+			background: var(--paper);
+			border-color: var(--paper);
+			box-shadow: 3px 3px 0 var(--accent);
+		}
+
+		.actions {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			gap: 7px;
+		}
+
+		.action-button {
+			padding: 0 11px;
+			font-size: .7rem;
+			letter-spacing: .035em;
+		}
+
+		.action-button:hover,
+		.add-button:hover,
+		.icon-button:hover {
+			color: var(--panel-ink);
+			background: var(--paper);
+			transform: translateY(-2px);
+		}
+
+		.action-button.is-active {
+			color: var(--panel-ink);
+			background: var(--accent);
+			border-color: var(--paper);
+		}
+
+		.workspace {
+			width: min(1480px, 100%);
+			margin: 0 auto;
+			padding: 26px clamp(14px, 3vw, 42px) 72px;
+		}
+
+		.editor-bar {
+			display: none;
+			align-items: center;
+			gap: 14px;
+			margin: 0 0 18px;
+			padding: 12px 15px;
+			color: var(--paper);
+			background: #050505e8;
+			border-left: 5px solid var(--accent);
+		}
+
+		.is-editing .editor-bar { display: flex; }
+
+		.palette-control {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			font-size: .72rem;
+			font-weight: 900;
+			text-transform: uppercase;
+		}
+
+		.palette-control input {
+			width: 31px;
+			height: 30px;
+			padding: 2px;
+			background: transparent;
+			border: 1px solid #ffffff90;
+			cursor: pointer;
+		}
+
+		.page { display: none; }
+
+		.page.is-active {
+			display: block;
+			animation: page-enter .48s cubic-bezier(.18, .8, .25, 1) both;
+		}
+
+		.page-heading {
+			display: flex;
+			align-items: end;
+			justify-content: space-between;
+			gap: 18px;
+			margin: 0 0 16px;
+		}
+
+		.page-kicker {
+			margin: 0 0 5px;
+			color: var(--paper);
+			font-size: .67rem;
+			font-weight: 900;
+			letter-spacing: .2em;
+			text-transform: uppercase;
+		}
+
+		h1, h2, h3, p { margin-top: 0; }
+
+		.page-title {
+			margin: 0;
+			font: clamp(2rem, 4vw, 3.6rem)/.9 var(--display);
+			text-transform: uppercase;
+			text-shadow: 4px 4px 0 var(--panel-ink), 6px 6px 0 var(--paper);
+		}
+
+		.page-index {
+			color: var(--paper);
+			font: 1rem var(--display);
+			text-shadow: 2px 2px 0 var(--panel-ink);
+		}
+
+		.panel {
+			position: relative;
+			min-width: 0;
+			color: var(--panel-ink);
+			background: var(--paper);
+			border: 3px solid var(--panel-ink);
+			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+		}
+
+		.panel-dark {
+			color: var(--paper);
+			background: var(--panel-ink);
+			border-color: var(--paper);
+			box-shadow: 5px 5px 0 var(--paper), 7px 7px 0 var(--panel-ink);
+		}
+
+		.panel-heading {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 12px;
+			margin: 0 0 14px;
+			font: 1.25rem/1 var(--display);
+			text-transform: uppercase;
+		}
+
+		.panel-heading::after {
+			flex: 1;
+			height: 3px;
+			content: "";
+			background: currentColor;
+			opacity: .75;
+		}
+
+		.identity-layout {
+			display: grid;
+			grid-template-columns: minmax(280px, .9fr) minmax(390px, 1.5fr);
+			gap: 19px;
+			align-items: stretch;
+		}
+
+		.identity-panel {
+			display: grid;
+			grid-template-columns: 130px minmax(0, 1fr);
+			gap: 15px;
+			padding: 16px;
+			color: var(--paper);
+			background: var(--panel-ink);
+			border: 3px solid var(--paper);
+			box-shadow: 7px 7px 0 var(--panel-ink), 9px 9px 0 var(--paper);
+		}
+
+		.portrait-wrap { min-width: 0; }
+
+		.portrait {
+			position: relative;
+			display: grid;
+			width: 100%;
+			aspect-ratio: 1;
+			place-items: center;
+			overflow: hidden;
+			background: var(--accent);
+			border: 3px solid var(--paper);
+			background-position: center;
+			background-size: cover;
+		}
+
+		.portrait-star {
+			width: 76%;
+			aspect-ratio: 1;
+			background: var(--paper);
+			clip-path: polygon(50% 0, 62% 35%, 100% 35%, 69% 57%, 81% 96%, 50% 73%, 19% 96%, 31% 57%, 0 35%, 38% 35%);
+			filter: drop-shadow(5px 5px 0 var(--panel-ink));
+			animation: portrait-pulse 2.8s ease-in-out infinite alternate;
+		}
+
+		.portrait.has-image .portrait-star { opacity: 0; }
+
+		.portrait-controls {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 5px;
+			margin-top: 7px;
+		}
+
+		.portrait-controls button {
+			min-height: 27px;
+			padding: 3px;
+			color: var(--paper);
+			background: transparent;
+			border: 1px solid #ffffff75;
+			font-size: .6rem;
+			font-weight: 900;
+		}
+
+		.identity-fields {
+			display: grid;
+			align-content: center;
+			gap: 10px;
+		}
+
+		.preset-summary {
+			margin: 20px 0;
+			padding: 16px;
+			color: var(--panel-ink);
+			background: var(--paper);
+			border: 3px solid var(--panel-ink);
+			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+		}
+
+		.preset-summary[hidden], .trail-ability-panel[hidden] { display: none; }
+
+		.preset-summary-title {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 12px;
+			margin-bottom: 12px;
+			padding-bottom: 8px;
+			border-bottom: 3px solid var(--panel-ink);
+		}
+
+		.preset-summary-title span,
+		.preset-summary-grid h3 {
+			margin: 0;
+			color: var(--accent);
+			font: 1rem var(--display);
+			letter-spacing: .08em;
+			text-transform: uppercase;
+		}
+
+		.preset-summary-title strong {
+			font: 1.2rem var(--display);
+			text-align: right;
+			text-transform: uppercase;
+		}
+
+		.preset-trail-overview {
+			margin: -3px 0 13px;
+			font-size: .9rem;
+			font-weight: 700;
+			line-height: 1.4;
+		}
+
+		.preset-summary-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 14px;
+		}
+
+		.preset-summary-grid article { min-width: 0; }
+
+		.preset-summary-grid p {
+			margin: 6px 0 0;
+			font-size: .9rem;
+			font-weight: 700;
+			line-height: 1.4;
+		}
+
+		.field-line { display: grid; gap: 4px; }
+
+		.field-label {
+			color: #dedede;
+			font-size: .68rem;
+			font-weight: 900;
+			letter-spacing: .11em;
+			text-transform: uppercase;
+		}
+
+		.text-field,
+		.number-field,
+		.record-input,
+		.record-area,
+		.note-area {
+			width: 100%;
+			min-width: 0;
+			color: var(--panel-ink);
+			background: var(--paper);
+			border: 2px solid transparent;
+			border-radius: 0;
+			outline: 0;
+		}
+
+		.text-field {
+			min-height: 36px;
+			padding: 6px 9px;
+			font-size: .95rem;
+			font-weight: 900;
+		}
+
+		input:focus, textarea:focus {
+			border-color: var(--accent);
+			box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--accent);
+		}
+
+		.resource-panel {
+			display: grid;
+			align-content: center;
+			gap: 12px;
+			padding: 16px 20px;
+			background: var(--panel-ink);
+			border: 3px solid var(--paper);
+			clip-path: polygon(0 0, 96% 0, 100% 12%, 100% 88%, 96% 100%, 0 100%);
+		}
+
+		.resource-row {
+			display: grid;
+			grid-template-columns: 52px minmax(0, 1fr) 125px;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.resource-label {
+			font: 1.05rem var(--display);
+			text-align: center;
+		}
+
+		.resource-track {
+			position: relative;
+			height: 28px;
+			overflow: hidden;
+			background: #ffffff16;
+			border: 2px solid var(--paper);
+		}
+
+		.resource-fill {
+			position: absolute;
+			inset: 0 auto 0 0;
+			width: var(--fill, 0%);
+			background: repeating-linear-gradient(125deg, var(--accent) 0 18px, #d0000c 18px 34px);
+			transition: width .8s cubic-bezier(.16, 1, .3, 1);
+		}
+
+		.resource-fill::after {
+			position: absolute;
+			inset: 0;
+			content: "";
+			background: linear-gradient(110deg, transparent, #ffffff50, transparent);
+			transform: translateX(-100%);
+			animation: resource-glint 3.4s ease-in-out infinite;
+		}
+
+		.resource-values {
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
+			align-items: center;
+			gap: 5px;
+			font-weight: 900;
+			text-align: center;
+		}
+
+		.number-field {
+			min-height: 31px;
+			padding: 3px 4px;
+			font-weight: 900;
+			text-align: center;
+		}
+
+		.combat-strip {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 12px;
+			margin: 20px 0;
+		}
+
+		.combat-cell {
+			display: grid;
+			grid-template-columns: 1fr minmax(70px, .7fr);
+			align-items: center;
+			gap: 10px;
+			min-height: 71px;
+			padding: 12px 15px;
+			color: var(--paper);
+			background: var(--panel-ink);
+			border-left: 5px solid var(--accent);
+			box-shadow: 4px 4px 0 var(--paper);
+		}
+
+		.combat-label {
+			font: 1rem var(--display);
+			text-transform: uppercase;
+		}
+
+		.combat-value {
+			min-height: 35px;
+			padding: 5px 7px;
+			color: var(--panel-ink);
+			background: var(--paper);
+			font-weight: 900;
+			text-align: center;
+		}
+
+		.skills-layout {
+			display: grid;
+			grid-template-columns: minmax(0, 1.8fr) minmax(230px, .8fr);
+			gap: 19px;
+			align-items: start;
+		}
+
+		.skills-panel, .notes-panel { padding: 18px; }
+
+		.attribute-columns {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 24px;
+		}
+
+		.attribute-list { display: grid; gap: 7px; }
+
+		.attribute-row {
+			display: grid;
+			grid-template-columns: 38px minmax(0, 1fr) 22px;
+			align-items: center;
+			gap: 8px;
+			min-height: 27px;
+			padding: 2px 4px;
+			border-bottom: 1px solid #11111118;
+			transition: transform .18s ease, background .18s ease;
+		}
+
+		.attribute-row:hover {
+			background: #f20b1610;
+			transform: translateX(3px);
+		}
+
+		.attribute-score {
+			width: 38px;
+			height: 27px;
+			padding: 2px;
+			color: var(--panel-ink);
+			background: var(--paper);
+			border: 2px solid var(--panel-ink);
+			font-family: var(--display);
+			font-size: 1rem;
+			font-weight: 900;
+			font-variant-numeric: tabular-nums;
+			text-align: center;
+		}
+
+		.attribute-score::placeholder {
+			color: #777;
+			opacity: 1;
+		}
+
+		.attribute-name {
+			min-width: 0;
+			font-family: var(--display);
+			font-size: 1rem;
+			letter-spacing: .028em;
+			line-height: 1.15;
+			text-transform: uppercase;
+		}
+
+		.remove-button {
+			width: 22px;
+			height: 22px;
+			padding: 0;
+			color: var(--accent);
+			background: transparent;
+			border: 0;
+			font-size: 1.1rem;
+			font-weight: 900;
+			opacity: .5;
+		}
+
+		.remove-button:hover { opacity: 1; transform: scale(1.16); }
+		[data-remove-static] { visibility: hidden; }
+		.is-editing [data-remove-static] { visibility: visible; }
+
+		.notes-panel {
+			color: var(--paper);
+			background: var(--panel-ink);
+			border: 3px solid var(--paper);
+			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+		}
+
+		.notes-panel .panel-heading { margin-bottom: 17px; font-size: 1.3rem; }
+
+		.combat-mini-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 7px;
+		}
+
+		.mini-stat {
+			display: grid;
+			gap: 7px;
+			padding: 10px;
+			color: var(--panel-ink);
+			background: var(--paper);
+			font-size: .82rem;
+			font-weight: 900;
+			letter-spacing: .04em;
+			text-transform: uppercase;
+		}
+
+		.mini-stat > span { color: var(--accent); }
+
+		.mini-stat:last-child { grid-column: 1 / -1; }
+
+		.mini-stat input {
+			width: 100%;
+			min-height: 39px;
+			padding: 5px;
+			border: 1px solid #111;
+			font-size: 1.05rem;
+			font-weight: 900;
+			text-align: center;
+		}
+
+		.add-button {
+			min-height: 34px;
+			margin-top: 12px;
+			padding: 0 12px;
+			color: var(--paper);
+			background: var(--panel-ink);
+			border-color: currentColor;
+			font-size: .72rem;
+			letter-spacing: .04em;
+		}
+
+		.add-button.light {
+			color: var(--panel-ink);
+			background: var(--paper);
+			border-color: var(--panel-ink);
+		}
+
+		.add-button.light:hover { color: var(--paper); background: var(--panel-ink); }
+
+		.page-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 22px;
+			align-items: start;
+		}
+
+		.content-panel { padding: 19px; }
+
+		.record-list { display: grid; gap: 10px; }
+
+		.dynamic-row {
+			position: relative;
+			display: grid;
+			grid-template-columns: minmax(110px, .75fr) minmax(0, 1.5fr) 28px;
+			gap: 8px;
+			padding: 8px;
+			background: #1111110a;
+			border-left: 3px solid var(--accent);
+			animation: row-arrive .3s ease both;
+		}
+
+		.record-input, .record-area {
+			min-height: 42px;
+			padding: 8px;
+			border-color: #11111128;
+			font-weight: 700;
+		}
+
+		.record-area { min-height: 64px; resize: vertical; }
+
+		.dynamic-row .remove-button {
+			align-self: start;
+			width: 28px;
+			height: 28px;
+			background: var(--paper);
+			border: 1px solid #1113;
+		}
+
+		.notes-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 18px;
+		}
+
+		.trail-ability-panel { margin-bottom: 20px; }
+
+		.trail-ability-type {
+			display: inline-block;
+			margin: 0 0 8px;
+			color: var(--accent);
+			font-size: .75rem;
+			font-weight: 900;
+			letter-spacing: .08em;
+			text-transform: uppercase;
+		}
+
+		.trail-ability-name {
+			margin: 0 0 8px;
+			font: 1.35rem/1.1 var(--display);
+			text-transform: uppercase;
+		}
+
+		.trail-ability-description {
+			max-width: 85ch;
+			margin: 0;
+			font-size: .95rem;
+			font-weight: 700;
+			line-height: 1.5;
+		}
+
+		.note-card {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 30px;
+			gap: 9px;
+			min-height: 210px;
+			padding: 10px;
+			background: var(--paper);
+			border: 3px solid var(--panel-ink);
+			box-shadow: 5px 5px 0 var(--panel-ink), 7px 7px 0 var(--paper);
+			animation: row-arrive .35s ease both;
+		}
+
+		.note-content { display: grid; grid-template-rows: 35px 1fr; gap: 8px; min-height: 0; }
+
+		.note-title {
+			width: 100%;
+			padding: 5px 7px;
+			color: var(--paper);
+			background: var(--panel-ink);
+			border: 0;
+			font: 1rem var(--display);
+			text-transform: uppercase;
+		}
+
+		.note-area {
+			min-height: 140px;
+			padding: 8px;
+			resize: vertical;
+			border: 1px solid #1112;
+			font-size: .9rem;
+			line-height: 1.45;
+		}
+
+		.note-card .remove-button {
+			width: 28px;
+			height: 28px;
+			background: var(--paper);
+			border: 1px solid #1113;
+		}
+
+		.editing [data-editable] {
+			outline: 1px dashed #f20b1690;
+			outline-offset: 2px;
+			cursor: text;
+		}
+
+		.editing [data-editable]:focus {
+			color: var(--accent);
+			outline: 2px solid var(--accent);
+		}
+
+		[contenteditable="true"] { min-width: 1em; }
+		[contenteditable="true"]:focus { outline-offset: 3px; }
+		.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+
+		@keyframes page-enter {
+			from { opacity: 0; transform: translateY(18px) skewY(.5deg); }
+			to { opacity: 1; transform: translateY(0) skewY(0); }
+		}
+
+		@keyframes row-arrive {
+			from { opacity: 0; transform: translateX(-12px); }
+			to { opacity: 1; transform: translateX(0); }
+		}
+
+		@keyframes mark-spin { to { transform: rotate(360deg); } }
+		@keyframes portrait-pulse { to { transform: rotate(12deg) scale(.9); } }
+		@keyframes resource-glint {
+			0%, 35% { transform: translateX(-100%); }
+			75%, 100% { transform: translateX(100%); }
+		}
+
+		@media (max-width: 1050px) {
+			.topbar { grid-template-columns: 1fr auto; }
+			.tabs { grid-column: 1 / -1; grid-row: 2; }
+			.actions { grid-column: 2; grid-row: 1; }
+			.identity-layout { grid-template-columns: 1fr; }
+			.identity-panel { grid-template-columns: 115px minmax(0, 1fr); }
+		}
+
+		@media (max-width: 760px) {
+			.topbar { gap: 10px; padding: 9px 12px; }
+			.brand-name { max-width: 160px; font-size: 1.02rem; }
+			.brand-subtitle { font-size: .56rem; }
+			.brand-mark { flex-basis: 32px; width: 32px; }
+			.actions { gap: 4px; }
+			.action-button { min-height: 33px; padding: 0 7px; font-size: .62rem; }
+			.tab-button { min-height: 35px; padding: 0 10px; font-size: .72rem; letter-spacing: .1em; }
+			.workspace { padding-top: 21px; }
+			.skills-layout { grid-template-columns: 1fr; }
+			.page-grid { grid-template-columns: 1fr; }
+		}
+
+		@media (max-width: 520px) {
+			.topbar { grid-template-columns: 1fr; }
+			.brand { justify-content: center; }
+			.actions { grid-column: 1; grid-row: auto; justify-content: center; flex-wrap: wrap; }
+			.tabs { grid-column: 1; grid-row: auto; width: 100%; }
+			.tab-button { flex: 1; padding: 0 5px; }
+			.workspace { padding: 18px 13px 62px; }
+			.editor-bar { flex-wrap: wrap; gap: 10px; }
+			.page-heading { align-items: center; }
+			.page-title { font-size: 2.35rem; }
+			.identity-panel { grid-template-columns: 88px minmax(0, 1fr); gap: 10px; padding: 10px; }
+			.portrait-controls button { font-size: .52rem; }
+			.resource-panel { gap: 10px; padding: 13px 10px; clip-path: none; }
+			.resource-row { grid-template-columns: 34px minmax(0, 1fr) 105px; gap: 7px; }
+			.resource-label { font-size: .9rem; }
+			.resource-track { height: 24px; }
+			.resource-values { gap: 3px; font-size: .78rem; }
+			.number-field { min-height: 28px; padding: 2px; font-size: .8rem; }
+			.combat-strip { gap: 7px; margin: 16px 0; }
+			.combat-cell { grid-template-columns: 1fr; gap: 6px; padding: 9px; text-align: center; }
+			.combat-label { font-size: .82rem; }
+			.combat-value { min-height: 30px; }
+			.attribute-columns { grid-template-columns: 1fr; gap: 5px; }
+			.skills-panel, .notes-panel, .content-panel { padding: 13px; }
+			.attribute-name { font-size: .95rem; }
+			.mini-stat { padding: 8px; font-size: .76rem; }
+			.mini-stat input { min-height: 36px; font-size: 1rem; }
+			.dynamic-row { grid-template-columns: minmax(0, 1fr) 28px; }
+			.dynamic-row .record-input, .dynamic-row .record-area { grid-column: 1; }
+			.dynamic-row .remove-button { grid-column: 2; grid-row: 1; }
+			.notes-grid { grid-template-columns: 1fr; }
+			.preset-summary-grid { grid-template-columns: 1fr; gap: 12px; }
+			.preset-summary-title { align-items: start; flex-direction: column; }
+			.preset-summary-title strong { text-align: left; }
+		}
+
+		@media (max-width: 360px) {
+			.tab-button { padding: 0 3px; font-size: .65rem; letter-spacing: .055em; }
+			.page-heading { gap: 8px; }
+			.page-title { font-size: 1.9rem; }
+		}
+
+		@media (hover: hover) and (pointer: fine) {
+			*, *::before, *::after { cursor: url("cursor.png") 1 1, auto !important; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.brand-mark, .portrait-star, .resource-fill::after { animation: none !important; }
+			.page.is-active, .dynamic-row, .note-card { animation: none !important; }
+			.resource-fill, button, .attribute-row { transition: none !important; }
+		}
+	</style>
+</head>
+<body>
+	<div class="scene" aria-hidden="true">
+		<div class="geometry" aria-hidden="true"></div>
+		<i class="star" aria-hidden="true"><span></span></i>
+		<i class="star" aria-hidden="true"><span></span></i>
+		<i class="star" aria-hidden="true"><span></span></i>
+		<i class="star" aria-hidden="true"><span></span></i>
+		<i class="star" aria-hidden="true"><span></span></i>
+		<i class="star" aria-hidden="true"><span></span></i>
+		<i class="star" aria-hidden="true"><span></span></i>
+	</div>
+
+	<div class="app" id="app">
+		<header class="topbar">
+			<div class="brand">
+				<div class="brand-mark" aria-hidden="true"></div>
+				<div class="brand-copy">
+					<span class="brand-name" data-key="brand-name" data-editable="true">ATE // FICHA</span>
+					<span class="brand-subtitle" data-key="brand-subtitle" data-editable="true">ARQUIVO DE PERSONAGEM</span>
+				</div>
+			</div>
+
+			<nav class="tabs" role="tablist" aria-label="Páginas da ficha">
+				<button class="tab-button" type="button" role="tab" id="tab-profile" aria-controls="page-profile" aria-selected="true" data-tab-target="profile"><span data-key="tab-profile-label" data-editable="true">PERSONAGEM</span></button>
+				<button class="tab-button" type="button" role="tab" id="tab-equipment" aria-controls="page-equipment" aria-selected="false" data-tab-target="equipment"><span data-key="tab-equipment-label" data-editable="true">ARSENAL</span></button>
+				<button class="tab-button" type="button" role="tab" id="tab-abilities" aria-controls="page-abilities" aria-selected="false" data-tab-target="abilities"><span data-key="tab-abilities-label" data-editable="true">HABILIDADES</span></button>
+			</nav>
+
+			<div class="actions">
+				<button class="action-button" id="edit-toggle" type="button" aria-pressed="false">EDITAR</button>
+				<button class="action-button" id="export-button" type="button">EXPORTAR</button>
+				<button class="action-button" id="import-button" type="button">IMPORTAR</button>
+				<button class="action-button" id="reset-button" type="button">ZERAR</button>
+				<input id="import-file" type="file" accept="application/json,.json" hidden>
+			</div>
+		</header>
+
+		<main class="workspace" id="workspace">
+			<div class="editor-bar" aria-label="Personalizar aparência">
+				<label class="palette-control"><span data-key="color-red-label" data-editable="true">FUNDO</span><input type="color" data-key="color-red" value="#f20b16" aria-label="Cor do fundo"></label>
+				<label class="palette-control"><span data-key="color-ink-label" data-editable="true">TINTA</span><input type="color" data-key="color-ink" value="#050505" aria-label="Cor escura"></label>
+				<label class="palette-control"><span data-key="color-paper-label" data-editable="true">PAPEL</span><input type="color" data-key="color-paper" value="#ffffff" aria-label="Cor clara"></label>
+			</div>
+
+			<section class="page is-active" id="page-profile" role="tabpanel" aria-labelledby="tab-profile" data-page="profile">
+				<div class="page-heading">
+					<div><p class="page-kicker" data-key="profile-kicker" data-editable="true">DOSSIÊ // 01</p><h1 class="page-title" data-key="profile-title" data-editable="true">PERSONAGEM</h1></div>
+					<span class="page-index">01 — 03</span>
+				</div>
+
+				<section class="identity-layout" aria-label="Identidade e recursos">
+					<div class="identity-panel">
+						<div class="portrait-wrap">
+							<div class="portrait" id="portrait"><div class="portrait-star" aria-hidden="true"></div></div>
+							<div class="portrait-controls">
+								<button type="button" id="portrait-choose">IMAGEM</button>
+								<button type="button" id="portrait-clear">LIMPAR</button>
+								<input id="portrait-file" type="file" accept="image/*" hidden>
+							</div>
+						</div>
+						<div class="identity-fields">
+							<label class="field-line"><span class="field-label" data-key="name-label" data-editable="true">NOME</span><input class="text-field" type="text" data-key="character-name" placeholder="Nome do personagem"></label>
+							<label class="field-line"><span class="field-label" data-key="focus-label" data-editable="true">FOCO</span><select class="text-field" data-key="character-focus" aria-label="Selecionar foco"><option value="">Selecione um foco</option><option value="pv">Foco em PV</option><option value="re">Foco em RE</option><option value="pe">Foco em PE</option></select></label>
+							<label class="field-line"><span class="field-label" data-key="trail-label" data-editable="true">TRILHA</span><select class="text-field" data-key="character-trail" aria-label="Selecionar trilha"><option value="">Selecione um foco primeiro</option></select></label>
+						</div>
+					</div>
+
+					<div class="resource-panel" aria-label="Recursos">
+						<div class="resource-row" data-resource="pv">
+							<span class="resource-label" data-key="pv-label" data-editable="true">PV</span>
+							<div class="resource-track" role="progressbar" aria-label="PV"><div class="resource-fill"></div></div>
+							<div class="resource-values"><input class="number-field" type="number" min="0" data-key="pv-current" value="0" aria-label="PV atual"><span>/</span><input class="number-field" type="number" min="0" data-key="pv-max" value="0" aria-label="PV máximo"></div>
+						</div>
+						<div class="resource-row" data-resource="re">
+							<span class="resource-label" data-key="re-label" data-editable="true">RE</span>
+							<div class="resource-track" role="progressbar" aria-label="RE"><div class="resource-fill"></div></div>
+							<div class="resource-values"><input class="number-field" type="number" min="0" data-key="re-current" value="0" aria-label="RE atual"><span>/</span><input class="number-field" type="number" min="0" data-key="re-max" value="0" aria-label="RE máximo"></div>
+						</div>
+						<div class="resource-row" data-resource="pe">
+							<span class="resource-label" data-key="pe-label" data-editable="true">PE</span>
+							<div class="resource-track" role="progressbar" aria-label="PE"><div class="resource-fill"></div></div>
+							<div class="resource-values"><input class="number-field" type="number" min="0" data-key="pe-current" value="0" aria-label="PE atual"><span>/</span><input class="number-field" type="number" min="0" data-key="pe-max" value="100" aria-label="PE máximo"></div>
+						</div>
+					</div>
+				</section>
+
+				<section class="preset-summary" id="preset-summary" aria-live="polite" hidden>
+					<div class="preset-summary-title"><span></span><strong id="preset-summary-name"></strong></div>
+					<p class="preset-trail-overview" id="preset-trail-overview" hidden></p>
+					<div class="preset-summary-grid">
+						<article><h3>EFEITO DO FOCO</h3><p id="preset-focus-effect"></p></article>
+						<article id="preset-trail-bonus-wrap"><h3>BÔNUS DA TRILHA</h3><p id="preset-trail-bonus"></p></article>
+						<article id="preset-trail-unlocks-wrap"><h3 id="preset-trail-unlocks-label">PERÍCIAS DESBLOQUEADAS</h3><p id="preset-trail-unlocks"></p></article>
+					</div>
+				</section>
+
+				<section class="skills-layout">
+					<div class="panel skills-panel">
+						<h2 class="panel-heading" data-key="attributes-title" data-editable="true">ATRIBUTOS & PERÍCIAS</h2>
+						<div class="attribute-columns"><div class="attribute-list" id="attribute-list-a"></div><div class="attribute-list" id="attribute-list-b"></div></div>
+						<div class="attribute-list" id="extra-skill-list"></div>
+						<button class="add-button light" type="button" data-add-skill>+ NOVO ATRIBUTO</button>
+					</div>
+					<aside class="notes-panel">
+						<h2 class="panel-heading" data-key="combat-title" data-editable="true">COMBATE</h2>
+						<div class="combat-mini-grid">
+							<label class="mini-stat"><span data-key="defense-label-mini" data-editable="true">DEFESA</span><input type="text" data-key="defense-mini" placeholder="—"></label>
+							<label class="mini-stat"><span data-key="actions-label-mini" data-editable="true">AÇÕES</span><input type="text" data-key="actions-mini" placeholder="—"></label>
+							<label class="mini-stat"><span data-key="block-label-mini" data-editable="true">BLOQUEIO</span><input type="text" data-key="block-mini" placeholder="—"></label>
+						</div>
+					</aside>
+				</section>
+			</section>
+
+			<section class="page" id="page-equipment" role="tabpanel" aria-labelledby="tab-equipment" data-page="equipment">
+				<div class="page-heading">
+					<div><p class="page-kicker" data-key="equipment-kicker" data-editable="true">INVENTÁRIO // 02</p><h1 class="page-title" data-key="equipment-title" data-editable="true">ARSENAL</h1></div>
+					<span class="page-index">02 — 03</span>
+				</div>
+				<div class="page-grid">
+					<section class="panel content-panel">
+						<h2 class="panel-heading" data-key="equipment-heading" data-editable="true">EQUIPAMENTOS</h2>
+						<div class="record-list" data-list="equipment"></div>
+						<button class="add-button light" type="button" data-add-item="equipment">+ NOVO EQUIPAMENTO</button>
+					</section>
+					<section class="panel content-panel">
+						<h2 class="panel-heading" data-key="abilities-heading" data-editable="true">EQUIPAMENTOS</h2>
+						<div class="record-list" data-list="abilities"></div>
+						<button class="add-button light" type="button" data-add-item="abilities">+ NOVO EQUIPAMENTO</button>
+					</section>
+				</div>
+			</section>
+
+			<section class="page" id="page-abilities" role="tabpanel" aria-labelledby="tab-abilities" data-page="abilities">
+				<div class="page-heading">
+					<div><p class="page-kicker" data-key="notes-kicker" data-editable="true">REGISTROS // 03</p><h1 class="page-title" data-key="notes-title" data-editable="true">HABILIDADES</h1></div>
+					<span class="page-index">03 — 03</span>
+				</div>
+				<section class="panel content-panel trail-ability-panel" id="trail-ability-panel" aria-live="polite" hidden>
+					<h2 class="panel-heading">HABILIDADE DA TRILHA</h2>
+					<p class="trail-ability-type" id="trail-ability-type"></p>
+					<h3 class="trail-ability-name" id="trail-ability-name"></h3>
+					<p class="trail-ability-description" id="trail-ability-description"></p>
+				</section>
+				<section class="notes-grid" data-list="notes" aria-label="Anotações de habilidades"></section>
+				<button class="add-button" type="button" data-add-item="notes">+ NOVO REGISTRO</button>
+			</section>
+		</main>
+	</div>
+
+	<script>
+		(() => {
+			const storageKey = "ate-persona-sheet-v1";
+			const app = document.querySelector("#app");
+			const workspace = document.querySelector("#workspace");
+			const defaultLists = {
+				equipment: [{ title: "", detail: "" }],
+				abilities: [{ title: "", detail: "" }],
+				notes: [
+					{ title: "HABILIDADE 01", detail: "" },
+					{ title: "HABILIDADE 02", detail: "" },
+					{ title: "HABILIDADE 03", detail: "" },
+					{ title: "HABILIDADE 04", detail: "" }
+				],
+				extraSkills: []
+			};
+			const focusPresets = {
+				pv: { label: "FOCO EM PV", effect: "Concede 2x Ações padrões e +2D6 de PV máximo." },
+				re: { label: "FOCO EM RE", effect: "Concede 2x Ações padrões ou 2x Ações de habilidade e +2D6 de RE máximo." },
+				pe: { label: "FOCO EM PE", effect: "Concede 2x Ações de habilidade e começa todos os combates com 15% PE." }
+			};
+			const trailPresets = {
+				"pv-artifice": {
+					focus: "pv", name: "Artífice", overview: "Grande talento com armas de corpo a corpo.",
+					bonus: "+1 Ação padrão e +2D6 de PV.", unlocks: "+Proficiência; +Reflexos ou +Briga",
+					abilityType: "Habilidade passiva", abilityName: "Melhor amigo",
+					ability: "Escolha uma arma favorita. Você recebe +1D6 em testes com ela e +1D em ataques perfeitos."
+				},
+				"pv-atirador": {
+					focus: "pv", name: "Atirador (armas de fogo)", overview: "Grande talento com armas de fogo.",
+					bonus: "+1 Ação padrão e +1D6 de PV.", unlocks: "+Pontaria; +Destreza ou +Busca",
+					abilityType: "Habilidade passiva", abilityName: "Melhor amigo",
+					ability: "Escolha uma arma favorita. Você recebe +1D6 em testes com ela e +1D em ataques perfeitos."
+				},
+				"pv-tanque": {
+					focus: "pv", name: "Tanque", overview: "Resistente e confiável como uma grande muralha.",
+					bonus: "+4D6 de PV.", unlocks: "+Físico; +Constituição ou +Imponência",
+					abilityType: "Habilidade passiva", abilityName: "Parede de carne",
+					ability: "Você recebe 3 pontos a menos de dano por padrão. Bloqueios quebrados não deixam você ABERTO."
+				},
+				"pv-atirador-desarmado": {
+					focus: "pv", name: "Atirador (desarmado)", overview: "Suas mãos vazias são armas de guerra.",
+					bonus: "+1 Ação padrão e +2D6 de PV.", unlocks: "+Briga; +Atletismo ou +Demolição",
+					abilityType: "Habilidade passiva", abilityName: "Mãos esmagadoras",
+					ability: "Ataques desarmados causam 2x o dano. Quando armado, seus ataques causam +1D6 de dano."
+				},
+				"pv-velocista": {
+					focus: "pv", name: "Velocista", overview: "Golpes rápidos e precisos, sem enrolação.",
+					bonus: "+2 Ações padrões.", unlocks: "+Destreza; +Furtividade ou +Proficiência",
+					abilityType: "Habilidade passiva", abilityName: "Ataque de oportunidade",
+					ability: "Ataques perfeitos permitem que você ataque novamente sem gastar ações."
+				},
+				"pv-arsenal": {
+					focus: "pv", name: "Arsenal", overview: "Cheio de armas: para que escolher uma só?",
+					bonus: "+1 Ação padrão e +1D6 de PV.", unlocks: "+Atletismo; +Físico ou +Proficiência",
+					abilityType: "Habilidade passiva", abilityName: "Combo de reforço",
+					ability: "Combos bem-sucedidos fazem com que todas as suas ações tenham +1D6 até o fim do combate."
+				},
+				"re-alma-de-arma": {
+					focus: "re", name: "Alma de Arma", overview: "Especialista em transformações, seja em armas ou objetos.",
+					bonus: "+2D10 de RE.", unlocks: "+Ressonância; +Proficiência ou +Tecnologia",
+					abilityType: "Habilidade ressonante", abilityName: "Alma de Arma",
+					ability: "Você pode se transformar em uma arma ou objeto. A forma de arma custa 2 RE por turno; a forma de objeto custa 3 RE por turno. Na forma de arma, um aliado usa você: ambos rolam 3D6 após o teste de ataque. Quanto mais resultados iguais entre os dois, maior o dano. Sem resultados iguais, o dano é reduzido à metade e apenas um dos dois o rola."
+				},
+				"re-alma-de-invocador": {
+					focus: "re", name: "Alma de Invocador", overview: "Invoca uma arma ou item próprio com poderes únicos.",
+					bonus: "+1D10 de RE.", unlocks: "+Ressonância; +Busca ou +Proficiência",
+					abilityType: "Habilidade ressonante", abilityName: "Alma de Invocador",
+					ability: "Você pode invocar seu item especial quando quiser, gastando 5 RE. Ele pode possuir poderes únicos, como uma habilidade própria ou um bônus."
+				},
+				"re-alma-de-detetive": {
+					focus: "re", name: "Alma de Detetive", overview: "Mestre em encontrar pistas com a ajuda da própria alma.",
+					bonus: "+1D10 de RE e começa com 10% de PE carregado.", unlocks: "+Intelecto; +Busca ou +Ouvir",
+					abilityType: "Habilidade passiva", abilityName: "Alma de Detetive",
+					ability: "Em cenas de investigação, quando o combo investigativo é ativado, você recebe +1D6 em testes, mas perde 1 ponto de status ao encontrar pistas."
+				},
+				"re-alma-de-atributo": {
+					focus: "re", name: "Alma de Atributo", overview: "Multifocal: você sabe um pouco de tudo.",
+					bonus: "+1D10 de RE e +4 pontos de perícia.", unlocks: "+Artes; +Labuta ou +Medicina",
+					abilityType: "Habilidade ressonante", abilityName: "Alma de Atributo",
+					ability: "Gastando 5 RE, você ou um aliado desbloqueia temporariamente uma perícia ou recebe um dado bônus adicional."
+				},
+				"re-alma-de-soldado": {
+					focus: "re", name: "Alma de Soldado", overview: "Sua força está nos companheiros: sozinhos não somos nada.",
+					bonus: "+1D10 de RE e +1D6 de PV.", unlocks: "+Ressonância; +Briga ou +Físico", unlockLabel: "Atributos desbloqueados",
+					abilityType: "Habilidade passiva", abilityName: "Alma de Soldado",
+					ability: "Quanto mais aliados houver em campo, maior sua força: você ganha 1D6 PV temporário para cada aliado. Se esses PV superarem sua vida normal, todos recebem 1 dado bônus adicional."
+				},
+				"re-alma-de-combos": {
+					focus: "re", name: "Alma de Combos", overview: "Você se adapta muito bem a situações de combate ou investigação.",
+					bonus: "+1D10 de RE ou +1D6 de PV, e +2 pontos de perícia.", unlocks: "+Destreza; +Físico ou +Intelecto",
+					abilityType: "Habilidade ressonante", abilityName: "Alma de Combos",
+					ability: "Quando um combo é ativado em combate, seu ou de outra pessoa, você recebe um dado bônus em todos os testes durante esse combo. Em uma cena de investigação, você pode saber quantos pontos de status receberia se encerrasse o combo naquele momento."
+				},
+				"pe-mestre-de-proposito": {
+					focus: "pe", name: "Mestre de Propósito", overview: "Domina muitas áreas diferentes; quanto mais, melhor.",
+					bonus: "+10% de PE carregado e +1D6 de RE.", unlocks: "+Busca; +Carisma ou +Intuição",
+					abilityType: "Habilidade passiva", abilityName: "Stacker",
+					ability: "Quanto mais habilidades de propósitos diferentes você tiver (suporte, dano, defesa etc.), mais seu Movimento Assinatura ganha +1D quando usado."
+				},
+				"pe-mestre-de-charlatanismo": {
+					focus: "pe", name: "Mestre de Charlatanismo", overview: "Sua lábia é maior que o seu caráter.",
+					bonus: "+10% de PE carregado e +1D6 de PV.", unlocks: "+Carisma; +Persuasão ou +Furtividade", unlockLabel: "Atributos desbloqueados",
+					abilityType: "Habilidade", abilityName: "Charlatão (-10% PE)",
+					ability: "Ao obter sucesso usando Carisma ou Persuasão, você ganha um dado bônus cumulativo, que pode usar a qualquer momento com qualquer habilidade."
+				},
+				"pe-mestre-construtor": {
+					focus: "pe", name: "Mestre Construtor", overview: "Criatividade é seu trunfo: você cria objetos e armas variados.",
+					bonus: "+10% de PE carregado e +2 pontos de perícia.", unlocks: "+Tecnologia; +Intelecto ou +Labuta",
+					abilityType: "Habilidade (-10% PE)", abilityName: "Tudo é incrível",
+					ability: "Ao usar suas construções, você pode gastar PE para dobrar seus dados bônus."
+				},
+				"pe-mestre-de-suporte": {
+					focus: "pe", name: "Mestre de Suporte", overview: "Você cuida das pessoas ao redor, ou garante que elas cuidem de você.",
+					bonus: "+10% de PE carregado e +1D6 de RE.", unlocks: "+Medicina; +Ressonância ou +Reflexos", unlockLabel: "Atributos desbloqueados",
+					abilityType: "Habilidade (-15% PE)", abilityName: "Coração a coração",
+					ability: "Ao rolar Medicina para curar um aliado, vocês dois rolam 3D6. Quanto mais resultados iguais entre os dois, mais a cura é multiplicada."
+				},
+				"pe-mestre-de-efeitos": {
+					focus: "pe", name: "Mestre de Efeitos", overview: "As habilidades de efeito são suas principais aliadas.",
+					bonus: "+10% de PE carregado e +1 Ação de habilidade.", unlocks: "+Destreza; +Intelecto ou +Físico",
+					abilityType: "Habilidade passiva", abilityName: "Efeito único",
+					ability: "Você pode criar uma habilidade de efeito e um efeito único para ela, com gasto de PE balanceado pelo mestre. Todas as suas habilidades de efeito duram 1 turno a mais."
+				},
+				"pe-mestre-de-manobra": {
+					focus: "pe", name: "Mestre de Manobra", overview: "Seu foco pode ser luta, mas você ainda tem muitas cartas na manga.",
+					bonus: "+10% de PE carregado e +1D6 de PV.", unlocks: "+Briga; +Proficiência ou +Pontaria", unlockLabel: "Atributos desbloqueados",
+					abilityType: "Habilidade ressonante", abilityName: "Coreografia",
+					ability: "Quando desarmado, você pode atacar duas vezes por ação. Ataques com coreografias diferentes da luta contam para combos (por exemplo, uma voadora e depois um agarrão)."
+				}
+			};
+			const skillGroups = [
+				[
+					["artes", "ARTES"], ["atletismo", "ATLETISMO"], ["briga", "BRIGA"],
+					["busca", "BUSCA"], ["carisma", "CARISMA"], ["constituicao", "CONSTITUIÇÃO"],
+					["demolicao", "DEMOLIÇÃO"], ["destreza", "DESTREZA"], ["fisico", "FÍSICO"],
+					["furtividade", "FURTIVIDADE"]
+				],
+				[
+					["imponencia", "IMPONÊNCIA"], ["intelecto", "INTELECTO"], ["intuicao", "INTUIÇÃO"],
+					["labuta", "LABUTA"], ["medicina", "MEDICINA"], ["ouvir", "OUVIR"],
+					["persuasao", "PERSUASÃO"], ["pontaria", "PONTARIA"], ["proficiencia", "PROFICIÊNCIA"],
+					["reflexos", "REFLEXOS"], ["ressonancia", "RESSONÂNCIA"], ["tecnologia", "TECNOLOGIA"]
+				]
+			];
+
+			function makeAttribute(key, label) {
+				const row = document.createElement("div");
+				row.className = "attribute-row";
+				const score = document.createElement("input");
+				score.className = "attribute-score";
+				score.type = "text";
+				score.inputMode = "numeric";
+				score.maxLength = 2;
+				score.pattern = "\\d{0,2}";
+				score.placeholder = "00";
+				score.dataset.key = `skill-score-${key}`;
+				score.setAttribute("aria-label", `Valor de ${label}, até dois dígitos`);
+				const name = document.createElement("span");
+				name.className = "attribute-name";
+				name.dataset.key = `skill-name-${key}`;
+				name.dataset.editable = "true";
+				name.textContent = label;
+				row.append(score, name);
+				return row;
+			}
+
+			function makeRecord(group, item = {}) {
+				const row = document.createElement("div");
+				row.className = "dynamic-row";
+				row.dataset.dynamicItem = group;
+				const title = document.createElement("input");
+				title.className = "record-input";
+				title.type = "text";
+				title.dataset.slot = "title";
+				title.placeholder = "Nome do equipamento";
+				title.value = item.title || "";
+				const detail = document.createElement("textarea");
+				detail.className = "record-area";
+				detail.dataset.slot = "detail";
+				detail.placeholder = "Detalhes, efeito, custo...";
+				detail.value = item.detail || "";
+				const remove = document.createElement("button");
+				remove.className = "remove-button";
+				remove.type = "button";
+				remove.dataset.removeRow = "true";
+				remove.setAttribute("aria-label", "Remover item");
+				remove.textContent = "×";
+				row.append(title, detail, remove);
+				return row;
+			}
+
+			function makeNote(item = {}) {
+				const row = document.createElement("article");
+				row.className = "note-card";
+				row.dataset.dynamicItem = "notes";
+				const content = document.createElement("div");
+				content.className = "note-content";
+				const title = document.createElement("input");
+				title.className = "note-title";
+				title.type = "text";
+				title.dataset.slot = "title";
+				title.placeholder = "TÍTULO";
+				title.value = item.title || "";
+				const detail = document.createElement("textarea");
+				detail.className = "note-area";
+				detail.dataset.slot = "detail";
+				detail.placeholder = "Anotações...";
+				detail.value = item.detail || "";
+				content.append(title, detail);
+				const remove = document.createElement("button");
+				remove.className = "remove-button";
+				remove.type = "button";
+				remove.dataset.removeRow = "true";
+				remove.setAttribute("aria-label", "Remover registro");
+				remove.textContent = "×";
+				row.append(content, remove);
+				return row;
+			}
+
+			function makeExtraSkill(item = {}) {
+				const row = document.createElement("div");
+				row.className = "attribute-row extra-skill-row";
+				row.dataset.dynamicItem = "extraSkills";
+				const score = document.createElement("input");
+				score.className = "attribute-score";
+				score.type = "text";
+				score.inputMode = "numeric";
+				score.maxLength = 2;
+				score.pattern = "\\d{0,2}";
+				score.placeholder = "00";
+				score.dataset.slot = "score";
+				score.value = String(item.score ?? (item.checked ? "1" : "")).replace(/\D/g, "").slice(0, 2);
+				score.setAttribute("aria-label", "Valor do atributo personalizado, até dois dígitos");
+				const name = document.createElement("span");
+				name.className = "attribute-name";
+				name.dataset.slot = "title";
+				name.dataset.editable = "true";
+				name.textContent = item.title || "NOVO ATRIBUTO";
+				const remove = document.createElement("button");
+				remove.className = "remove-button";
+				remove.type = "button";
+				remove.dataset.removeRow = "true";
+				remove.setAttribute("aria-label", "Remover atributo");
+				remove.textContent = "×";
+				row.append(score, name, remove);
+				return row;
+			}
+
+			function renderLists(lists) {
+				for (const group of ["equipment", "abilities", "notes"]) {
+					const container = document.querySelector(`[data-list="${group}"]`);
+					container.replaceChildren();
+					for (const item of Array.isArray(lists[group]) ? lists[group] : []) {
+						container.append(group === "notes" ? makeNote(item) : makeRecord(group, item));
+					}
+				}
+				const extraSkills = document.querySelector("#extra-skill-list");
+				extraSkills.replaceChildren();
+				for (const item of Array.isArray(lists.extraSkills) ? lists.extraSkills : []) {
+					extraSkills.append(makeExtraSkill(item));
+				}
+				setEditMode(app.classList.contains("is-editing"));
+			}
+
+			function readElement(element) {
+				if (element.type === "checkbox") return element.checked;
+				if (element.matches("[data-editable]")) return element.textContent.trim();
+				return element.value;
+			}
+
+			function collectState() {
+				const fields = {};
+				for (const element of app.querySelectorAll("[data-key]")) {
+					fields[element.dataset.key] = readElement(element);
+				}
+				const lists = {};
+				for (const group of ["equipment", "abilities", "notes", "extraSkills"]) {
+					const selector = group === "extraSkills" ? "#extra-skill-list" : `[data-list="${group}"]`;
+					lists[group] = [...document.querySelector(selector).querySelectorAll("[data-dynamic-item]")].map(row => {
+						const item = {};
+						for (const field of row.querySelectorAll("[data-slot]")) {
+							item[field.dataset.slot] = field.type === "checkbox" ? field.checked : field.matches("[contenteditable='true']") || field.dataset.editable ? field.textContent.trim() : field.value;
+						}
+						return item;
+					});
+				}
+				return {
+					version: 1,
+					fields,
+					lists,
+					activePage: document.querySelector(".tab-button[aria-selected='true']")?.dataset.tabTarget || "profile",
+					portrait: app.dataset.portrait || ""
+				};
+			}
+
+			function setColorVariables() {
+				const red = app.querySelector('[data-key="color-red"]')?.value || "#f20b16";
+				const ink = app.querySelector('[data-key="color-ink"]')?.value || "#050505";
+				const paper = app.querySelector('[data-key="color-paper"]')?.value || "#ffffff";
+				document.documentElement.style.setProperty("--red", red);
+				document.documentElement.style.setProperty("--accent", red);
+				document.documentElement.style.setProperty("--black", ink);
+				document.documentElement.style.setProperty("--panel-ink", ink);
+				document.documentElement.style.setProperty("--white", paper);
+				document.documentElement.style.setProperty("--paper", paper);
+			}
+
+			function updateResources() {
+				for (const row of document.querySelectorAll(".resource-row")) {
+					const key = row.dataset.resource;
+					const current = Math.max(0, Number(app.querySelector(`[data-key="${key}-current"]`).value) || 0);
+					const maximum = Math.max(0, Number(app.querySelector(`[data-key="${key}-max"]`).value) || 0);
+					const percentage = maximum ? Math.min(100, current / maximum * 100) : 0;
+					row.querySelector(".resource-fill").style.setProperty("--fill", `${percentage}%`);
+					row.querySelector("[role='progressbar']").setAttribute("aria-valuenow", String(current));
+					row.querySelector("[role='progressbar']").setAttribute("aria-valuemax", String(maximum));
+				}
+			}
+
+			const focusSelect = app.querySelector('[data-key="character-focus"]');
+			const trailSelect = app.querySelector('[data-key="character-trail"]');
+
+			function normalizePresetName(value) {
+				return String(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+			}
+
+			function restoreSelectValue(key, value) {
+				const text = String(value ?? "");
+				if (key === "character-focus") {
+					if (focusPresets[text]) return text;
+					if (text.startsWith("custom-focus:")) {
+						const label = text.slice("custom-focus:".length);
+					focusSelect.add(new Option(label, text));
+					return text;
+					}
+					const normalized = normalizePresetName(text);
+					const match = Object.entries(focusPresets).find(([keyName, focus]) => normalized === keyName || normalized === normalizePresetName(focus.label));
+					if (match) return match[0];
+					if (text) {
+						const customValue = `custom-focus:${text}`;
+						focusSelect.add(new Option(text, customValue));
+						return customValue;
+					}
+				}
+				if (key === "character-trail") {
+					if (trailPresets[text]) return text;
+					if (text.startsWith("custom-trail:")) {
+						trailSelect.add(new Option(text.slice("custom-trail:".length), text));
+						return text;
+					}
+					const normalized = normalizePresetName(text);
+					const match = Object.entries(trailPresets).find(([, trail]) => {
+						const plainName = trail.name.replace(/\s*\(.+\)$/, "");
+						return normalized === normalizePresetName(trail.name) || normalized === normalizePresetName(plainName);
+					});
+					if (match) return match[0];
+					if (text) {
+						const customValue = `custom-trail:${text}`;
+						trailSelect.add(new Option(text, customValue));
+						return customValue;
+					}
+				}
+				return text;
+			}
+
+			function populateTrailOptions(focusKey = focusSelect.value) {
+				const currentValue = trailSelect.value;
+				const customOption = currentValue.startsWith("custom-trail:")
+					? { value: currentValue, label: currentValue.slice("custom-trail:".length) }
+					: null;
+				trailSelect.replaceChildren(new Option(focusKey ? "Selecione uma trilha" : "Selecione um foco primeiro", ""));
+				const focusKeys = Object.keys(focusPresets);
+				if (focusPresets[focusKey]) focusKeys.sort((first, second) => Number(second === focusKey) - Number(first === focusKey));
+				for (const key of focusKeys) {
+					const group = document.createElement("optgroup");
+					group.label = focusPresets[key].label;
+					for (const [trailId, trail] of Object.entries(trailPresets)) {
+						if (trail.focus === key) group.append(new Option(trail.name, trailId));
+					}
+					trailSelect.append(group);
+				}
+				if (customOption) trailSelect.add(new Option(customOption.label, customOption.value));
+				if ([...trailSelect.options].some(option => option.value === currentValue)) trailSelect.value = currentValue;
+			}
+
+			function renderPresetDetails() {
+				const trail = trailPresets[trailSelect.value];
+				const focus = focusPresets[trail?.focus || focusSelect.value];
+				const summary = document.querySelector("#preset-summary");
+				const abilityPanel = document.querySelector("#trail-ability-panel");
+				summary.hidden = !focus;
+				abilityPanel.hidden = !trail;
+				if (!focus) return;
+
+				document.querySelector("#preset-summary-name").textContent = trail?.name || focus.label;
+				document.querySelector("#preset-trail-overview").textContent = trail?.overview || "";
+				document.querySelector("#preset-trail-overview").hidden = !trail;
+				document.querySelector("#preset-focus-effect").textContent = focus.effect;
+				document.querySelector("#preset-trail-bonus-wrap").hidden = !trail;
+				document.querySelector("#preset-trail-bonus").textContent = trail?.bonus || "";
+				document.querySelector("#preset-trail-unlocks-wrap").hidden = !trail;
+				document.querySelector("#preset-trail-unlocks-label").textContent = trail?.unlockLabel || "Perícias desbloqueadas";
+				document.querySelector("#preset-trail-unlocks").textContent = trail?.unlocks || "";
+				if (trail) {
+					document.querySelector("#trail-ability-type").textContent = trail.abilityType;
+					document.querySelector("#trail-ability-name").textContent = trail.abilityName;
+					document.querySelector("#trail-ability-description").textContent = trail.ability;
+				}
+			}
+
+			function save() {
+				try {
+					localStorage.setItem(storageKey, JSON.stringify(collectState()));
+				} catch (error) {
+					console.error("Não foi possível salvar a ficha localmente.", error);
+				}
+			}
+
+			function applyState(state) {
+				if (state.fields && typeof state.fields === "object") {
+					for (const [key, value] of Object.entries(state.fields)) {
+						const legacySkill = key.match(/^skill-check-(.+)$/);
+						const fieldKey = legacySkill ? `skill-score-${legacySkill[1]}` : key;
+						const element = [...app.querySelectorAll("[data-key]")].find(item => item.dataset.key === fieldKey);
+						if (!element) continue;
+						let fieldValue = legacySkill ? (value ? "1" : "") : key === "abilities-heading" && value === "HABILIDADES" ? "EQUIPAMENTOS" : value;
+						if (key === "character-focus" || key === "character-trail") fieldValue = restoreSelectValue(key, fieldValue);
+						if (element.type === "checkbox") element.checked = Boolean(fieldValue);
+						else if (element.matches("[data-editable]")) element.textContent = String(fieldValue);
+						else element.value = String(fieldValue);
+					}
+				}
+				const lists = {};
+				for (const [group, defaults] of Object.entries(defaultLists)) {
+					lists[group] = Array.isArray(state.lists?.[group]) ? state.lists[group] : defaults;
+				}
+				renderLists(lists);
+				if (state.portrait && typeof state.portrait === "string" && state.portrait.startsWith("data:image/")) {
+					setPortrait(state.portrait);
+				}
+				if (["profile", "equipment", "abilities"].includes(state.activePage)) setPage(state.activePage, false);
+				setColorVariables();
+				updateResources();
+			}
+
+			function setPage(page, shouldSave = true) {
+				for (const tab of document.querySelectorAll("[data-tab-target]")) {
+					const selected = tab.dataset.tabTarget === page;
+					tab.setAttribute("aria-selected", String(selected));
+					tab.tabIndex = selected ? 0 : -1;
+				}
+				for (const panel of document.querySelectorAll("[data-page]")) {
+					panel.classList.toggle("is-active", panel.dataset.page === page);
+				}
+				if (shouldSave) save();
+			}
+
+			function setEditMode(enabled) {
+				app.classList.toggle("is-editing", enabled);
+				app.classList.toggle("editing", enabled);
+				document.querySelector("#edit-toggle").classList.toggle("is-active", enabled);
+				document.querySelector("#edit-toggle").setAttribute("aria-pressed", String(enabled));
+				for (const element of app.querySelectorAll("[data-editable]")) element.contentEditable = String(enabled);
+			}
+
+			function setPortrait(dataUrl) {
+				const portrait = document.querySelector("#portrait");
+				portrait.classList.toggle("has-image", Boolean(dataUrl));
+				portrait.style.backgroundImage = dataUrl ? `url("${dataUrl}")` : "";
+				app.dataset.portrait = dataUrl || "";
+			}
+
+			function addItem(group, item = {}) {
+				const container = group === "extraSkills" ? document.querySelector("#extra-skill-list") : document.querySelector(`[data-list="${group}"]`);
+				const row = group === "extraSkills" ? makeExtraSkill(item) : group === "notes" ? makeNote(item) : makeRecord(group, item);
+				container.append(row);
+				setEditMode(app.classList.contains("is-editing"));
+				row.querySelector("input:not([type='checkbox']), textarea")?.focus();
+				save();
+			}
+
+			for (const [index, group] of skillGroups.entries()) {
+				const list = document.querySelector(index === 0 ? "#attribute-list-a" : "#attribute-list-b");
+				for (const [key, label] of group) list.append(makeAttribute(key, label));
+			}
+
+			populateTrailOptions();
+			let storedState;
+			try { storedState = JSON.parse(localStorage.getItem(storageKey) || "null"); } catch { storedState = null; }
+			applyState(storedState && storedState.version === 1 ? storedState : { lists: defaultLists });
+			const initialTrail = trailPresets[trailSelect.value];
+			if (initialTrail) focusSelect.value = initialTrail.focus;
+			populateTrailOptions(focusSelect.value);
+			renderPresetDetails();
+
+			document.querySelector(".tabs").addEventListener("click", event => {
+				const tab = event.target.closest("[data-tab-target]");
+				if (tab) setPage(tab.dataset.tabTarget);
+			});
+
+			document.querySelector("#edit-toggle").addEventListener("click", event => {
+				const enabled = event.currentTarget.getAttribute("aria-pressed") !== "true";
+				setEditMode(enabled);
+				if (!enabled) save();
+			});
+
+			app.addEventListener("click", event => {
+				const addButton = event.target.closest("[data-add-item]");
+				if (addButton) addItem(addButton.dataset.addItem);
+				if (event.target.closest("[data-add-skill]")) addItem("extraSkills", { title: "NOVO ATRIBUTO" });
+				const removeButton = event.target.closest("[data-remove-row]");
+				if (removeButton) {
+					removeButton.closest("[data-dynamic-item]").remove();
+					save();
+				}
+			});
+
+			app.addEventListener("input", event => {
+				if (event.target.matches("[data-key], [data-slot]")) {
+					if (event.target.matches(".attribute-score")) event.target.value = event.target.value.replace(/\D/g, "").slice(0, 2);
+					if (event.target.closest(".resource-row")) updateResources();
+					if (event.target.matches('[data-key^="color-"]')) setColorVariables();
+					save();
+				}
+			});
+			app.addEventListener("change", event => {
+				if (event.target === focusSelect) {
+					if (trailPresets[trailSelect.value]?.focus !== focusSelect.value) trailSelect.value = "";
+					populateTrailOptions(focusSelect.value);
+					renderPresetDetails();
+				}
+				if (event.target === trailSelect) {
+					const selectedTrail = trailPresets[trailSelect.value];
+					if (selectedTrail) focusSelect.value = selectedTrail.focus;
+					populateTrailOptions(focusSelect.value);
+					renderPresetDetails();
+				}
+				if (event.target.matches("input, textarea, select")) {
+					if (event.target.closest(".resource-row")) updateResources();
+					if (event.target.matches('[data-key^="color-"]')) setColorVariables();
+					save();
+				}
+			});
+
+			document.querySelector("#export-button").addEventListener("click", () => {
+				const file = new Blob([JSON.stringify(collectState(), null, 2)], { type: "application/json" });
+				const url = URL.createObjectURL(file);
+				const link = document.createElement("a");
+				link.href = url;
+				link.download = "ficha-personagem.json";
+				link.click();
+				URL.revokeObjectURL(url);
+			});
+
+			document.querySelector("#import-button").addEventListener("click", () => document.querySelector("#import-file").click());
+			document.querySelector("#import-file").addEventListener("change", event => {
+				const file = event.target.files?.[0];
+				if (!file) return;
+				const reader = new FileReader();
+				reader.onload = () => {
+					try {
+						const state = JSON.parse(String(reader.result));
+						if (state.version !== 1 || !state.fields || typeof state.fields !== "object") throw new Error("Formato inválido");
+						applyState(state);
+						save();
+					} catch {
+						window.alert("Não foi possível importar: o arquivo não é uma ficha válida.");
+					}
+				};
+				reader.readAsText(file);
+				event.target.value = "";
+			});
+
+			document.querySelector("#reset-button").addEventListener("click", () => {
+				if (confirm("Apagar os dados salvos desta ficha e voltar ao modelo inicial?")) {
+					localStorage.removeItem(storageKey);
+					location.reload();
+				}
+			});
+
+			const portraitFile = document.querySelector("#portrait-file");
+			document.querySelector("#portrait-choose").addEventListener("click", () => portraitFile.click());
+			document.querySelector("#portrait-clear").addEventListener("click", () => {
+				setPortrait("");
+				save();
+			});
+			portraitFile.addEventListener("change", event => {
+				const file = event.target.files?.[0];
+				if (!file || !file.type.startsWith("image/")) return;
+				const image = new Image();
+				const objectUrl = URL.createObjectURL(file);
+				image.onload = () => {
+					const scale = Math.min(1, 600 / Math.max(image.naturalWidth, image.naturalHeight));
+					const canvas = document.createElement("canvas");
+					canvas.width = Math.round(image.naturalWidth * scale);
+					canvas.height = Math.round(image.naturalHeight * scale);
+					canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+					setPortrait(canvas.toDataURL("image/jpeg", .82));
+					URL.revokeObjectURL(objectUrl);
+					save();
+				};
+				image.onerror = () => URL.revokeObjectURL(objectUrl);
+				image.src = objectUrl;
+			});
+		})();
+	</script>
+</body>
+</html>
