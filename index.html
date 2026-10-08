@@ -582,6 +582,29 @@
 			resize: vertical;
 		}
 
+		.movement-signature-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 12px; }
+		.signature-status { margin: 0; color: #c9c9c9; font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+		.signature-execute { min-height: 42px; padding: 0 18px; color: var(--paper); background: var(--accent); border: 2px solid var(--paper); box-shadow: 4px 4px 0 var(--paper); font: .9rem var(--display); letter-spacing: .12em; transition: transform .15s ease, box-shadow .15s ease; }
+		.signature-execute:hover:not(:disabled) { transform: translate(-2px, -2px) skewX(-4deg); box-shadow: 6px 6px 0 var(--paper); }
+		.signature-execute:disabled { color: #a4a4a4; background: #353535; border-color: #777; box-shadow: 3px 3px 0 #777; cursor: not-allowed; }
+		.signature-slash { position: fixed; z-index: 1000; inset: 0; overflow: hidden; pointer-events: none; background: rgba(0, 0, 0, .22); }
+		.signature-slash[hidden] { display: none; }
+		.signature-slash-shape, .signature-slash-ink, .signature-slash-red { position: absolute; inset: 0; clip-path: polygon(0 48%, 4% 42%, 9% 39%, 13% 32%, 20% 33%, 25% 26%, 33% 24%, 39% 18%, 47% 21%, 54% 14%, 61% 19%, 68% 12%, 76% 17%, 83% 9%, 91% 15%, 97% 7%, 100% 4%, 100% 88%, 96% 83%, 91% 86%, 84% 80%, 77% 85%, 69% 78%, 62% 83%, 54% 77%, 47% 84%, 39% 78%, 32% 85%, 25% 77%, 19% 82%, 13% 73%, 8% 78%, 4% 68%, 0 72%); }
+		.signature-slash-shape { inset: 0 -14%; top: 50%; bottom: auto; height: clamp(260px, 54vh, 560px); filter: drop-shadow(0 0 4px var(--paper)) drop-shadow(0 14px 0 rgba(0, 0, 0, .72)) drop-shadow(0 0 30px var(--accent)); transform: translate3d(-110vw, -50%, 0) rotate(-7deg) scaleX(.72); transform-origin: center; will-change: transform, opacity; animation: signature-cut .88s cubic-bezier(.18, .82, .22, 1) both; }
+		.signature-slash-ink { inset: 0; background: var(--paper); }
+		.signature-slash-ink::before { position: absolute; inset: 7px 0; content: ""; background: var(--black); clip-path: inherit; }
+		.signature-slash-red { inset: 16px 0; background: var(--accent); filter: drop-shadow(0 0 28px var(--accent)); }
+		.signature-slash-shape::before, .signature-slash-shape::after { position: absolute; z-index: 2; left: -2%; width: 104%; content: ""; transform: scaleX(0); transform-origin: left center; }
+		.signature-slash-shape::before { top: 17%; height: 13%; background: var(--paper); clip-path: polygon(0 65%, 18% 0, 39% 42%, 61% 5%, 82% 35%, 100% 0, 96% 100%, 72% 64%, 50% 100%, 28% 58%, 8% 100%); animation: signature-streak .62s .08s cubic-bezier(.16, 1, .3, 1) both; }
+		.signature-slash-shape::after { top: 72%; height: 9%; background: var(--black); clip-path: polygon(0 25%, 22% 0, 45% 48%, 69% 10%, 100% 0, 94% 100%, 71% 66%, 47% 100%, 21% 54%, 4% 100%); animation: signature-streak .7s .12s cubic-bezier(.16, 1, .3, 1) both; }
+		.signature-slash-title { position: absolute; z-index: 3; inset: 0; display: grid; place-items: center; padding: 0 15vw; color: var(--paper); font: clamp(1.8rem, 6vw, 5.4rem)/.9 var(--display); letter-spacing: .035em; text-align: center; text-transform: uppercase; -webkit-text-stroke: 1.5px var(--black); text-shadow: 3px 3px 0 var(--accent), 7px 7px 0 var(--black), 12px 12px 0 rgba(0, 0, 0, .52); overflow-wrap: anywhere; opacity: 0; animation: signature-title .72s .16s cubic-bezier(.16, 1, .3, 1) both; }
+		.signature-slash.is-active { animation: signature-impact .88s ease-out both, signature-shake .3s cubic-bezier(.36, .07, .19, .97) both; }
+		@keyframes signature-cut { 0% { opacity: 0; transform: translate3d(-110vw, -50%, 0) rotate(-7deg) scaleX(.72); } 16% { opacity: 1; transform: translate3d(-63vw, -50%, 0) rotate(-5deg) scaleX(.84); } 48% { opacity: 1; transform: translate3d(-2vw, -50%, 0) rotate(-1deg) scaleX(1.03); } 67% { opacity: 1; transform: translate3d(0, -50%, 0) rotate(0) scaleX(1); } 100% { opacity: 0; transform: translate3d(108vw, -50%, 0) rotate(3deg) scaleX(1.08); } }
+		@keyframes signature-streak { 0% { opacity: 0; transform: scaleX(0); } 32% { opacity: 1; transform: scaleX(1.04); } 100% { opacity: 0; transform: scaleX(1.12); } }
+		@keyframes signature-title { 0% { opacity: 0; transform: translateY(12px) scale(.72) skewX(-8deg); } 48% { opacity: 1; transform: translateY(0) scale(1.06) skewX(2deg); } 68%, 100% { opacity: 1; transform: scale(1) skewX(0); } }
+		@keyframes signature-impact { 0%, 100% { background-color: rgba(0, 0, 0, .22); } 18% { background-color: rgba(255, 255, 255, .88); } 32% { background-color: rgba(0, 0, 0, .08); } }
+		@keyframes signature-shake { 0%, 100% { transform: translate3d(0, 0, 0); } 25% { transform: translate3d(-7px, 2px, 0); } 50% { transform: translate3d(5px, -2px, 0); } 75% { transform: translate3d(-3px, 1px, 0); } }
+
 		.preset-summary-grid p {
 			margin: 6px 0 0;
 			font-size: .9rem;
@@ -1217,6 +1240,9 @@
 		<i class="star" aria-hidden="true"><span></span></i>
 		<i class="star" aria-hidden="true"><span></span></i>
 	</div>
+	<div class="signature-slash" id="signature-slash" aria-hidden="true" hidden>
+		<div class="signature-slash-shape"><div class="signature-slash-ink"><div class="signature-slash-red"></div></div><span class="signature-slash-title" id="signature-slash-title"></span></div>
+	</div>
 
 	<div class="app" id="app">
 		<button class="effect-legend-button" id="effects-button" type="button" aria-expanded="false" aria-controls="effects-overlay">Efeitos</button>
@@ -1327,6 +1353,10 @@
 <aside class="movement-signature-panel" aria-label="Movimento assinatura do personagem">
 						<h2 class="panel-heading" data-key="movement-signature-title" data-editable="true">MOVIMENTO ASSINATURA</h2>
 						<textarea class="movement-signature-area" data-key="movement-signature" placeholder="Descreva o movimento, golpe ou ação que define sua assinatura..."></textarea>
+						<div class="movement-signature-actions">
+							<p class="signature-status" id="signature-status" aria-live="polite">Requer 100% de PE</p>
+							<button class="signature-execute" id="signature-execute" type="button" disabled>EXECUTAR</button>
+						</div>
 					</aside>
 
 					<section class="skills-layout">
@@ -1695,6 +1725,28 @@
 				document.documentElement.style.setProperty("--paper", paper);
 			}
 
+			const signatureExecuteButton = document.querySelector("#signature-execute");
+			const signatureStatus = document.querySelector("#signature-status");
+			const signatureSlash = document.querySelector("#signature-slash");
+			const signatureSlashShape = signatureSlash.querySelector(".signature-slash-shape");
+			const signatureSlashTitle = document.querySelector("#signature-slash-title");
+			let signatureSlashRunning = false;
+			let signatureSlashTimeout;
+
+			function isPEFull() {
+				const current = Math.max(0, Number(app.querySelector('[data-key="pe-current"]').value) || 0);
+				const maximum = Math.max(0, Number(app.querySelector('[data-key="pe-max"]').value) || 0);
+				return maximum > 0 && current >= maximum;
+			}
+
+			function updateSignatureButton() {
+				const ready = isPEFull();
+				signatureExecuteButton.disabled = !ready || signatureSlashRunning;
+				signatureStatus.textContent = signatureSlashRunning
+					? "MOVIMENTO EM EXECUÇÃO"
+					: ready ? "PE NO MÁXIMO • PRONTO" : "Requer 100% de PE";
+			}
+
 			function updateResources() {
 				for (const row of document.querySelectorAll(".resource-row")) {
 					const key = row.dataset.resource;
@@ -1705,6 +1757,7 @@
 					row.querySelector("[role='progressbar']").setAttribute("aria-valuenow", String(current));
 					row.querySelector("[role='progressbar']").setAttribute("aria-valuemax", String(maximum));
 				}
+				updateSignatureButton();
 			}
 
 			const focusSelect = app.querySelector('[data-key="character-focus"]');
@@ -1907,6 +1960,36 @@
 			effectsOverlay.addEventListener("click", event => {
 				if (event.target === effectsOverlay) toggleEffectsPopup(false);
 			});
+			function finishSignatureSlash() {
+				if (!signatureSlashRunning) return;
+				clearTimeout(signatureSlashTimeout);
+				signatureSlashRunning = false;
+				signatureSlash.hidden = true;
+				signatureSlash.classList.remove("is-active");
+				updateSignatureButton();
+			}
+
+			signatureExecuteButton.addEventListener("click", () => {
+				if (!isPEFull() || signatureSlashRunning) return;
+				const customTitle = app.querySelector('[data-key="movement-signature-title"]').textContent.trim();
+				const movementText = app.querySelector('[data-key="movement-signature"]').value.trim();
+				signatureSlashTitle.textContent = customTitle && customTitle !== "MOVIMENTO ASSINATURA"
+					? customTitle
+					: movementText || customTitle || "MOVIMENTO ASSINATURA";
+				app.querySelector('[data-key="pe-current"]').value = "0";
+				updateResources();
+				save();
+				signatureSlashRunning = true;
+				updateSignatureButton();
+				signatureSlash.hidden = false;
+				signatureSlash.classList.remove("is-active");
+				signatureSlashShape.style.animation = "none";
+				void signatureSlashShape.offsetWidth;
+				signatureSlashShape.style.animation = "";
+				signatureSlash.classList.add("is-active");
+				signatureSlashTimeout = setTimeout(finishSignatureSlash, 900);
+			});
+			signatureSlashShape.addEventListener("animationend", finishSignatureSlash);
 			document.addEventListener("keydown", event => {
 				if (event.key === "Escape") toggleEffectsPopup(false);
 			});
